@@ -54,7 +54,7 @@ public class QuerySettingsPanel extends SettingsPanel implements PropertyChangeL
         final PropertyPanel echoParams = new BooleanPropertyPanel(I18n.get("settings.query.forceEchoParams"), "solr.query.echoParams", editable, this);
         //	final PropertyPanel useExtraParameters = new TextPropertyPanel(I18n.get("settings.query.extraParameters"), "solr.query.extraParameters", editable, this);
 		final PropertyPanel useExtraParameters = new TablePropertyPanel(I18n.get("settings.query.extraParameters"), "solr.query.extraParameters", editable, this);
-		final PropertyPanel queryExecutor = new ComboPropertyPanel(I18n.get("settings.query.queryExecutor"), "executor.queryExecutor", editable, this, new String[]{"random", "constant"}, true);
+		final PropertyPanel queryExecutor = new ComboPropertyPanel(I18n.get("settings.query.queryExecutor"), "executor.queryExecutor", editable, this, new String[]{"random", "constant","fixedpool-random"}, true);
 		final PropertyPanel addExternalRandomParameters = new BooleanPropertyPanel(I18n.get("settings.query.addRandomExtraParams"), "solr.query.addRandomExtraParams", editable, this);
 		final PropertyPanel extraParameters = new FilePropertyPanel(I18n.get("settings.query.extraParams"), "solr.query.extraParams", editable, this);
 

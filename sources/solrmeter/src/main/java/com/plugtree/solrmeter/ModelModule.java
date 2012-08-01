@@ -103,6 +103,7 @@ public class ModelModule extends AbstractModule {
     Map<String, Class<? extends QueryExecutor>> map = new HashMap<String, Class<? extends QueryExecutor>>();
     map.put("constant", QueryExecutorConstantImpl.class);
     map.put("random", QueryExecutorRandomImpl.class);
+    map.put("fixedpool-random", FixedPoolRandomExecutor.class);
     return map;
   }
   
