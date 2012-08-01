@@ -25,6 +25,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 
 import com.google.inject.Inject;
 import com.plugtree.solrmeter.model.QueryStatistic;
+import com.plugtree.solrmeter.model.SolrMeterConfiguration;
 import com.plugtree.solrmeter.model.exception.QueryException;
 import com.plugtree.solrmeter.model.exception.StatisticConnectionException;
 import com.plugtree.stressTestScope.StressTestScope;
@@ -91,7 +92,7 @@ public class CacheHistoryStatistic implements QueryStatistic {
 	private long initTime;
 	
 	//TODO @configurable
-	private long refreshInterval = 1000;
+	private long refreshInterval = Long.valueOf(SolrMeterConfiguration.getProperty("solr.cacheStatRefresh","30000"));
 	
 	private StatisticUpdateThread updateThread;
 	
