@@ -1,6 +1,5 @@
 package com.plugtree.solrmeter.model.executor;
 
-import java.lang.management.ManagementFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -15,12 +14,9 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
-import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.apache.log4j.Logger;
@@ -43,9 +39,9 @@ import com.plugtree.stressTestScope.StressTestScope;
 @StressTestScope
 public class FixedPoolRandomExecutor implements QueryExecutor {
 
-	private static final Logger log = Logger.getLogger(FixedPoolRandomExecutor.class);
+	static private final Logger log = Logger.getLogger(FixedPoolRandomExecutor.class);
 	// it's really could be fixed
-	protected final static ThreadPoolExecutor live = new ThreadPoolExecutor(1, 
+	private final static ThreadPoolExecutor live = new ThreadPoolExecutor(1, 
 			Integer.valueOf(SolrMeterConfiguration.getProperty("solr.maxWorkers","100")),
 	  60L, TimeUnit.SECONDS,
 	  new SynchronousQueue<Runnable>());
@@ -90,8 +86,8 @@ public class FixedPoolRandomExecutor implements QueryExecutor {
 					public void run() {
 						try {
 							op.execute();
-						} catch (OperationException e) {
-							log.info("on  ivoking "+op, e);
+						} catch (Exception e) {
+							log.info("on  invoking "+op, e);
 						}
 					}
 				};
@@ -137,44 +133,7 @@ public class FixedPoolRandomExecutor implements QueryExecutor {
 
 	@Override
 	public void start() {
-		loadAverageWatchDog = timer.scheduleAtFixedRate(new Runnable() {
-			MBeanServer mbean;
-			ObjectName os;
-			{
-				try {
-				mbean = ManagementFactory.getPlatformMBeanServer();
-					os = new ObjectName("java.lang:type=OperatingSystem");
-					
-				} catch (Exception e) {
-					log.error("fail to access mbean", e);
-					throw new RuntimeException(e);
-				}
-			}
-			@Override
-			public void run() {
-				
-				AttributeList attributes;
-				try {
-					attributes = mbean.getAttributes(os, 
-							new String[]{"AvailableProcessors","SystemLoadAverage"});
-				} catch (Exception e) {
-					log.error("fail to access mbean: "+mbean+" "+os, e);
-					throw new RuntimeException(e);
-				}
-				log.info(attributes + " live workers "+
-						FixedPoolRandomExecutor.live.getActiveCount());
-				double cores = ((Integer)attributes.get(0)).doubleValue();
-				double la = ((Double)attributes.get(1)).doubleValue();
-				if((int)cores==(int)la){
-					log.warn("cores: "+cores+", load average:"+la);
-				}else
-					if(cores<la){
-						log.error("haling! cores: "+cores+", load average:"+la);
-						stop();
-					}
-				
-			}
-		}, 0, 1, TimeUnit.SECONDS);
+		loadAverageWatchDog = timer.scheduleAtFixedRate(new Watchdog(this, live), 0, 20, TimeUnit.SECONDS);
 		fixedRateLimitPool.startWithRate(operationsPerMinute);
 	}
 
