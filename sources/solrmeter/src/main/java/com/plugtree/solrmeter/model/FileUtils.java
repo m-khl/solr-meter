@@ -28,6 +28,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -83,6 +84,11 @@ public class FileUtils {
 	 */
 	public static Object getNextRandomObject(List<?> list) {
 		int index = (int) (Math.random() * list.size());
+		return list.get(index);
+	}
+	
+	public static Object getNextRandomObject(List<?> list, Random r) {
+		int index = (int) (r.nextInt( list.size()));
 		return list.get(index);
 	}
 	

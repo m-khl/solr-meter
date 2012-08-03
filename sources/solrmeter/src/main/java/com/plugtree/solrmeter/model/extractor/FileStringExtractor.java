@@ -17,6 +17,7 @@ package com.plugtree.solrmeter.model.extractor;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +35,7 @@ public class FileStringExtractor {
 	 * List of all strings obtained from the file
 	 */
 	protected List<String> strings;
+	private Random random;
 	
 	public FileStringExtractor(String filePath) {
 		super();
@@ -50,6 +52,7 @@ public class FileStringExtractor {
 	 */
 	protected void loadStrings(String filePath) {
 		strings = FileUtils.loadStringsFromFile(filePath);
+		random =null;
 	}
 
 	/**
@@ -61,7 +64,10 @@ public class FileStringExtractor {
 		if(strings == null || strings.isEmpty()) {
 			return null;
 		}
-		return (String)FileUtils.getNextRandomObject(strings);
+		if(random==null){
+			random = new Random(strings.size());
+		}
+		return (String)FileUtils.getNextRandomObject(strings, random );
 	}
 	
 	/**
