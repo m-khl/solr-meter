@@ -52,7 +52,7 @@ public class FileStringExtractor {
 	 */
 	protected void loadStrings(String filePath) {
 		strings = FileUtils.loadStringsFromFile(filePath);
-		random = new Random(strings.size());
+		random =null;
 	}
 
 	/**
@@ -63,6 +63,9 @@ public class FileStringExtractor {
 	public String getRandomString() {
 		if(strings == null || strings.isEmpty()) {
 			return null;
+		}
+		if(random==null){
+			random = new Random(strings.size());
 		}
 		return (String)FileUtils.getNextRandomObject(strings, random );
 	}
